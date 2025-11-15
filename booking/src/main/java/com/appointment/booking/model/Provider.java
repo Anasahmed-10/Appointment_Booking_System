@@ -31,7 +31,7 @@ public class Provider {
 
 
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
-    private List<Service> service; //One provider can offer multiple Services
+    private List<ServiceEntity> serviceEntity; //One provider can offer multiple Services
 
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     private List<Schedule> schedules; //One provider can have multiple schedules
