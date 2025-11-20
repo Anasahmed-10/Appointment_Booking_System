@@ -6,7 +6,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "provider")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
