@@ -4,6 +4,8 @@ import com.appointment.booking.model.ServiceEntity;
 import com.appointment.booking.model.Provider;
 import com.appointment.booking.repository.ServiceEntityRepository;
 import com.appointment.booking.service.ServiceEntityService;
+import com.appointment.booking.controller.dto.ServiceRequest;
+import com.appointment.booking.service.ProviderService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class ServiceEntityServiceImpl implements ServiceEntityService {
 
     private final ServiceEntityRepository serviceEntityRepository;
+    private final ProviderService providerService;
 
     @Override
     public ServiceEntity createService(ServiceEntity serviceEntity) {
@@ -30,4 +33,32 @@ public class ServiceEntityServiceImpl implements ServiceEntityService {
     public Optional<ServiceEntity> findById(Long id) {
         return serviceEntityRepository.findById(id);
     }
+
+    @Override
+    public ServiceEntity updateService(Long id, ServiceRequest req) {
+        ServiceEntity service = serviceEntityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        // Optional: update provider if needed
+        if (req.getProviderId() != null) {
+            Provider provider = providerService.findById(req.getProviderId())
+                    .orElseThrow(() -> new RuntimeException("Provider not found"));
+            service.setProvider(provider);
+        }
+
+        service.setName(req.getName());
+        service.setDescription(req.getDescription());
+        service.setDuration(req.getDuration());
+        service.setPrice(req.getPrice());
+
+        return serviceEntityRepository.save(service);
+    }
+
+    @Override
+    public void deleteService(Long id) {
+        ServiceEntity service = serviceEntityRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        serviceEntityRepository.delete(service);
+    }
+
 }
