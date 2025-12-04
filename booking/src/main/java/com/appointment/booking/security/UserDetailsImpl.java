@@ -4,6 +4,8 @@ Maps User to Spring Security
  */
 import com.appointment.booking.model.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,7 @@ import java.util.Collections;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
+    @Autowired
     private final User user;
 
     @Override

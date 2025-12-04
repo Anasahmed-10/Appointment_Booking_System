@@ -10,6 +10,7 @@ import com.appointment.booking.service.AuthService;
 import com.appointment.booking.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
+    @Autowired
     private final AuthService authService;
+    @Autowired
     private final JwtUtil jwtUtil;
 
     // 1. REGISTER NEW USER

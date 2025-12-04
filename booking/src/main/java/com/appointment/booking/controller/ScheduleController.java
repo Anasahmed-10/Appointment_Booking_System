@@ -4,8 +4,11 @@ import com.appointment.booking.controller.dto.ScheduleRequest;
 import com.appointment.booking.controller.dto.ScheduleResponse;
 import com.appointment.booking.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.appointment.booking.model.User;
 
 import java.util.List;
 
@@ -14,15 +17,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleController {
 
+    @Autowired
     private final ScheduleService scheduleService;
 
     // Create schedule for a provider
     @PostMapping
     public ResponseEntity<ScheduleResponse> createSchedule(
             @PathVariable Long providerId,
-            @RequestBody ScheduleRequest scheduleRequest
+            @RequestBody ScheduleRequest scheduleRequest,
+            @AuthenticationPrincipal User currentUser
+
     ) {
-        ScheduleResponse createdSchedule = scheduleService.createSchedule(providerId, scheduleRequest);
+        ScheduleResponse createdSchedule = scheduleService.createSchedule(providerId, scheduleRequest, currentUser);
         return ResponseEntity.ok(createdSchedule);
     }
 
@@ -49,18 +55,22 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponse> updateSchedule(
             @PathVariable Long providerId,
             @PathVariable Long scheduleId,
-            @RequestBody ScheduleRequest scheduleRequest
+            @RequestBody ScheduleRequest scheduleRequest,
+            @AuthenticationPrincipal User currentUser
+
     ) {
-        return ResponseEntity.ok(scheduleService.updateSchedule(providerId, scheduleId, scheduleRequest));
+        return ResponseEntity.ok(scheduleService.updateSchedule(providerId, scheduleId, scheduleRequest, currentUser));
     }
 
     // Delete schedule
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<String> deleteSchedule(
             @PathVariable Long providerId,
-            @PathVariable Long scheduleId
+            @PathVariable Long scheduleId,
+            @AuthenticationPrincipal User currentUser
+
     ) {
-        scheduleService.deleteSchedule(providerId, scheduleId);
+        scheduleService.deleteSchedule(providerId, scheduleId, currentUser);
         return ResponseEntity.ok("Schedule deleted successfully.");
     }
 }

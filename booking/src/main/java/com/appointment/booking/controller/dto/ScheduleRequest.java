@@ -1,10 +1,12 @@
 package com.appointment.booking.controller.dto;
 
-import lombok.Data;
 import java.time.LocalTime;
 import com.appointment.booking.model.DaysOfWeek;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ScheduleRequest {
     private DaysOfWeek dayOfWeek;
     private LocalTime availableFrom;

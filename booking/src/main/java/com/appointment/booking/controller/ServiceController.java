@@ -7,6 +7,8 @@ import com.appointment.booking.model.ServiceEntity;
 import com.appointment.booking.service.ProviderService;
 import com.appointment.booking.service.ServiceEntityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.appointment.booking.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,13 @@ public class ServiceController {
 
     // CREATE service
     @PostMapping
-    public ResponseEntity<ServiceResponse> createService(@Valid @RequestBody ServiceRequest req) {
-        Provider provider = providerService.findById(req.getProviderId())
-                .orElseThrow(() -> new RuntimeException("Provider not found"));
+    public ResponseEntity<ServiceResponse> createService(
+        @Valid @RequestBody ServiceRequest req,
+        @AuthenticationPrincipal User currentUser)  {
+       // Provider provider = providerService.findById(req.getProviderId())
+         //       .orElseThrow(() -> new RuntimeException("Provider not found"));
+        Provider provider = providerService.findByUser(currentUser)
+        .orElseThrow(() -> new RuntimeException("Provider profile not found for user"));
 
         ServiceEntity service = ServiceEntity.builder()
                 .name(req.getName())
@@ -65,16 +71,20 @@ public class ServiceController {
     @PutMapping("/{id}")
     public ResponseEntity<ServiceResponse> updateService(
             @PathVariable Long id,
-            @Valid @RequestBody ServiceRequest req) {
+            @Valid @RequestBody ServiceRequest req,
+            @AuthenticationPrincipal User currentUser) {
 
-        ServiceEntity updated = serviceEntityService.updateService(id, req);
+        ServiceEntity updated = serviceEntityService.updateService(id, req, currentUser);
         return ResponseEntity.ok(ServiceResponse.fromEntity(updated));
     }
 
     // DELETE service
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteService(@PathVariable Long id) {
-        serviceEntityService.deleteService(id);
+    public ResponseEntity<Void> deleteService(
+        @PathVariable Long id,
+        @AuthenticationPrincipal User currentUser) {
+    
+        serviceEntityService.deleteService(id, currentUser);
         return ResponseEntity.noContent().build();
     }
 }

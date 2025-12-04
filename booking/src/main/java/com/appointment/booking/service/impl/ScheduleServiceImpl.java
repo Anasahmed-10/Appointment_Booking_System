@@ -7,7 +7,9 @@ import com.appointment.booking.repository.ProviderRepository;
 import com.appointment.booking.repository.ScheduleRepository;
 import com.appointment.booking.service.ScheduleService;
 import com.appointment.booking.controller.dto.ScheduleRequest;
+import com.appointment.booking.model.UserRole;
 import lombok.RequiredArgsConstructor;
+import com.appointment.booking.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +20,18 @@ import java.util.stream.Collectors;
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+
     private final ProviderRepository providerRepository;
 
     @Override
-    public ScheduleResponse createSchedule(Long providerId, ScheduleRequest scheduleRequest) {
+    public ScheduleResponse createSchedule(Long providerId, ScheduleRequest scheduleRequest, User currentUser) {
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> new RuntimeException("Provider not found"));
 
+        if (!provider.getUser().getId().equals(currentUser.getId()) &&
+            currentUser.getRole() != UserRole.ADMIN) {
+        throw new RuntimeException("You are not authorized to create schedules for this provider");
+        }
         Schedule schedule = toEntity(scheduleRequest, provider);
         Schedule saved = scheduleRepository.save(schedule);
 
@@ -35,7 +42,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResponse> findByProvider(Long providerId) {
-       List<Schedule> schedules = scheduleRepository.findByProvideId(providerId);
+       List<Schedule> schedules = scheduleRepository.findByProviderId(providerId);
         return schedules.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
@@ -43,13 +50,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 
     @Override
-    public ScheduleResponse updateSchedule(Long providerId, Long scheduleId, ScheduleRequest scheduleRequest) {
+    public ScheduleResponse updateSchedule(Long providerId, Long scheduleId, ScheduleRequest scheduleRequest, User currentUser) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
-        // Validate ownership
-        if (!schedule.getProvider().getId().equals(providerId)) {
-            throw new RuntimeException("Schedule does not belong to this provider");
+         if (!schedule.getProvider().getUser().getId().equals(currentUser.getId()) &&
+                currentUser.getRole() != UserRole.ADMIN) {
+            throw new RuntimeException("You are not authorized to update this schedule");
         }
 
         schedule.setDayOfWeek(scheduleRequest.getDayOfWeek());
@@ -60,12 +67,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         return toResponseDTO(updated);
     }
     @Override
-    public void deleteSchedule(Long providerId, Long scheduleId) {
+    public void deleteSchedule(Long providerId, Long scheduleId, User currentUser) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new RuntimeException("Schedule not found"));
 
-        if (!schedule.getProvider().getId().equals(providerId)) {
-            throw new RuntimeException("Schedule does not belong to this provider");
+        if (!schedule.getProvider().getUser().getId().equals(currentUser.getId()) &&
+                currentUser.getRole() != UserRole.ADMIN) {
+            throw new RuntimeException("You are not authorized to delete this schedule");
         }
 
         scheduleRepository.delete(schedule);

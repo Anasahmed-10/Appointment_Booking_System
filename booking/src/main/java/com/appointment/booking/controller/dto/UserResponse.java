@@ -1,15 +1,13 @@
 package com.appointment.booking.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.appointment.booking.model.User;
-import lombok.Builder;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
     private Long id;
     private String name;

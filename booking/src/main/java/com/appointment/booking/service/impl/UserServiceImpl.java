@@ -4,6 +4,7 @@ import com.appointment.booking.model.User;
 import com.appointment.booking.repository.UserRepository;
 import com.appointment.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private final UserRepository userRepository;
-
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     @Override

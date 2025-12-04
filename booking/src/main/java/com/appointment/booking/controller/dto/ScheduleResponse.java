@@ -1,10 +1,15 @@
 package com.appointment.booking.controller.dto;
 
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalTime;
 import com.appointment.booking.model.DaysOfWeek;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ScheduleResponse {
 
     private Long id;

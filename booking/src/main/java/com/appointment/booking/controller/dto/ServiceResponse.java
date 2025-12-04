@@ -1,11 +1,13 @@
 package com.appointment.booking.controller.dto;
 
 import com.appointment.booking.model.ServiceEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ServiceResponse {
 
     private Long id;

@@ -7,6 +7,7 @@ import com.appointment.booking.repository.UserRepository;
 import com.appointment.booking.service.AuthService;
 import com.appointment.booking.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,9 +17,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
+    @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
     private final UserService userService;
 
     @Override
@@ -37,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
                 .role(request.getRole())
                 .build();
 

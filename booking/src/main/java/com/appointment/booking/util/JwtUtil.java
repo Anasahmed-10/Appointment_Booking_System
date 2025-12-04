@@ -23,6 +23,8 @@ public class JwtUtil {
 
     private SecretKey key;
 
+ //   private final SecretKey key = Keys.hmacShaKeyFor(secret.getBytes()) ;
+
     @PostConstruct
     public void init() {
         // Initialize SecretKey after spring injects secret

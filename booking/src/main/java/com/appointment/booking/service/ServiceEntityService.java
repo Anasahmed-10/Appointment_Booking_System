@@ -3,6 +3,7 @@ package com.appointment.booking.service;
 import com.appointment.booking.model.ServiceEntity;
 import com.appointment.booking.model.Provider;
 import com.appointment.booking.controller.dto.ServiceRequest;
+import com.appointment.booking.model.User;
 
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface ServiceEntityService { //for services offered by Provider
 
     Optional<ServiceEntity> findById(Long id);
 
-    ServiceEntity updateService(Long id, ServiceRequest req);
+    ServiceEntity updateService(Long id, ServiceRequest req, User currentUser);
 
-    void deleteService(Long id);
+    void deleteService(Long id, User currentUser);
 }

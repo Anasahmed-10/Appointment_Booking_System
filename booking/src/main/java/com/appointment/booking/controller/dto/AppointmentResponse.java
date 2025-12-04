@@ -1,11 +1,16 @@
 package com.appointment.booking.controller.dto;
 
-import lombok.Data;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppointmentResponse {
 
     private Long id;

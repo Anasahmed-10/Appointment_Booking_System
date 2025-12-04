@@ -9,6 +9,7 @@ import com.appointment.booking.repository.*;
 import com.appointment.booking.service.AppointmentService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -19,37 +20,40 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
 
+    @Autowired
     private final AppointmentRepository appointmentRepository;
+    @Autowired
     private final ProviderRepository providerRepository;
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final ServiceEntityRepository serviceRepository;
+    @Autowired
     private final ScheduleRepository scheduleRepository;
 
     // -----------------------------------
     // CREATE Appointment
     // -----------------------------------
     @Override
-    public AppointmentResponse createAppointment(AppointmentRequest dto) {
+    public AppointmentResponse createAppointment(AppointmentRequest dto, User currentUser) {
 
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+        if (!currentUser.getRole().equals(UserRole.CUSTOMER)) {
+            throw new RuntimeException("Only customers can book appointments");
+        }
+        if (!dto.getUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("Cannot book appointment for another user");
+        }
+        User user = currentUser;
         Provider provider = providerRepository.findById(dto.getProviderId())
                 .orElseThrow(() -> new RuntimeException("Provider not found"));
 
         ServiceEntity serviceEntity = serviceRepository.findById(dto.getServiceId())
                 .orElseThrow(() -> new RuntimeException("Service not found"));
 
-        // Step 1: Validate time range
         validateTimeRange(dto.getStartTime(), dto.getEndTime());
-
-        // Step 2: Validate schedule
         validateProviderSchedule(provider, dto);
-
-        // Step 3: Check for overlapping appointments
         validateNoOverlaps(provider, dto);
 
-        // Step 4: Create appointment
         Appointment appointment = Appointment.builder()
                 .user(user)
                 .provider(provider)
@@ -66,7 +70,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // GET appointments by provider
     @Override
-    public List<AppointmentResponse> getAppointmentsByProvider(Long providerId) {
+    public List<AppointmentResponse> getAppointmentsByProvider(Long providerId, User currentUser) {
+        Provider provider = providerRepository.findById(providerId)
+                .orElseThrow(() -> new RuntimeException("Provider not found"));
+
+        if (!currentUser.getRole().equals(UserRole.ADMIN) &&
+                !provider.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+        
         return appointmentRepository.findByProviderId(providerId)
                 .stream()
                 .map(this::toResponseDTO)
@@ -75,7 +87,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // GET appointments by user
     @Override
-    public List<AppointmentResponse> getAppointmentsByUser(Long userId) {
+    public List<AppointmentResponse> getAppointmentsByUser(Long userId, User currentUser) {
+        if (!currentUser.getRole().equals(UserRole.ADMIN) && !userId.equals(currentUser.getId())) {
+            throw new RuntimeException("Access denied");
+        }   
+        
         return appointmentRepository.findByUserId(userId)
                 .stream()
                 .map(this::toResponseDTO)
@@ -84,11 +100,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // UPDATE status (Confirm / Cancel / Complete)
     @Override
-    public AppointmentResponse updateAppointmentStatus(Long appointmentId, String status) {
+    public AppointmentResponse updateAppointmentStatus(Long appointmentId, String status, User currentUser) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
+        if (!currentUser.getRole().equals(UserRole.ADMIN) &&
+                !appointment.getProvider().getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Access denied");
+        }           
         AppointmentStatus newStatus = AppointmentStatus.valueOf(status.toUpperCase());
         appointment.setStatus(newStatus);
 
@@ -98,10 +118,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // DELETE
     @Override
-    public void deleteAppointment(Long appointmentId) {
+    public void deleteAppointment(Long appointmentId, User currentUser) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
+        boolean isOwner = appointment.getUser().getId().equals(currentUser.getId());
+        boolean isProvider = appointment.getProvider().getUser().getId().equals(currentUser.getId());
+        boolean isAdmin = currentUser.getRole().equals(UserRole.ADMIN);
+        
+        if (!isOwner && !isProvider && !isAdmin) {
+            throw new RuntimeException("Access denied");
+        }
         appointmentRepository.delete(appointment);
     }
 
@@ -116,7 +143,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private void validateProviderSchedule(Provider provider, AppointmentRequest dto) {
         DaysOfWeek day = DaysOfWeek.valueOf(dto.getDate().getDayOfWeek().name());
 
-        List<Schedule> schedules = scheduleRepository.findByProvideId(provider.getId());
+        List<Schedule> schedules = scheduleRepository.findByProviderId(provider.getId());
 
         Schedule matched = schedules.stream()
                 .filter(s -> s.getDayOfWeek().equals(day))

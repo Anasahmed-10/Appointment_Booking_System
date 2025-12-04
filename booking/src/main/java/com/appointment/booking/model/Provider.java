@@ -8,8 +8,8 @@ import java.util.List;
 @Table(name = "provider")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Provider {
 
