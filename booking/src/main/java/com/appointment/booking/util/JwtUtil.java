@@ -1,8 +1,11 @@
 package com.appointment.booking.util;
 
 import com.appointment.booking.model.User;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,51 +15,67 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final SecretKey secretKey;
-    private final long jwtExpirationMs;
+    @Value("${app.jwt.secret}")
+    private String secret;
 
-    public JwtUtil(
-            @Value("${app.jwt.secret}") String secret,
-            @Value("${app.jwt.expiration-ms:3600000}") long jwtExpirationMs // default 1 hour
-    ) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-        this.jwtExpirationMs = jwtExpirationMs;
+    @Value("${app.jwt.expiration-ms:3600000}") // default 1 hour
+    private long jwtExpirationMs;
+
+    private SecretKey key;
+
+    @PostConstruct
+    public void init() {
+        // Initialize SecretKey after spring injects secret
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
+    // Generate JWT token from User
     public String generateToken(User user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .claim("role", user.getRole() != null ? user.getRole().name() : null)
+                .subject(user.getEmail())
+                .claim("role", user.getRole().name())
                 .claim("userId", user.getId())
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(key) // HS256 by default
                 .compact();
     }
 
+    // Validate token (basic expiration check)
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            Jwts.parser()
+                    .verifyWith(key).build()
+                    .parseSignedClaims(token);
             return true;
-        } catch (JwtException ex) {
+        } catch (Exception ex) {
             return false;
         }
     }
 
+    // Extract username/email from token
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+       return Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
 
-        return claims.getSubject();
+
     }
 
-    public Claims getAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+    public Object getAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
+
+
+

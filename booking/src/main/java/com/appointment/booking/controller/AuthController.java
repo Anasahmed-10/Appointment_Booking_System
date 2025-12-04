@@ -4,6 +4,7 @@ import com.appointment.booking.controller.dto.LoginRequest;
 import com.appointment.booking.controller.dto.LoginResponse;
 import com.appointment.booking.controller.dto.RegisterRequest;
 import com.appointment.booking.controller.dto.UserResponse;
+import com.appointment.booking.controller.dto.AuthResponse;
 import com.appointment.booking.model.User;
 import com.appointment.booking.service.AuthService;
 import com.appointment.booking.util.JwtUtil;
@@ -22,24 +23,20 @@ public class AuthController {
 
     // 1. REGISTER NEW USER
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         User createdUser = authService.register(request);
-        return ResponseEntity.ok(UserResponse.fromEntity(createdUser));
+        String token = jwtUtil.generateToken(createdUser);
+        return ResponseEntity.ok(AuthResponse.from(createdUser, token));
     }
 
     // 2. LOGIN AND RECEIVE JWT
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
 
-        User user = authService.authenticate(request.getEmail(), request.getPassword());
+        User authenticatedUser = authService.authenticate(request.getEmail(), request.getPassword());
 
-        String token = jwtUtil.generateToken(user);
+        String token = jwtUtil.generateToken(authenticatedUser);
 
-        return ResponseEntity.ok(
-                LoginResponse.builder()
-                        .token(token)
-                        .user(UserResponse.fromEntity(user))
-                        .build()
-        );
+        return ResponseEntity.ok(AuthResponse.from(authenticatedUser, token));
     }
 }
