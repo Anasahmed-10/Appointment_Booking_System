@@ -135,7 +135,7 @@ Copy code
   "startTime": "09:00",
   "endTime": "17:00"
 }
-###📅 **Appointment Endpoints**
+##📅 **Appointment Endpoints**
 Book an Appointment
 POST /api/appointments
 
@@ -178,7 +178,7 @@ Provider approves/cancels/updates appointment
 
 You may also create a structured Postman Collection for easier collaboration.
 
-🏁 Running the Project
+##🏁 Running the Project
 bash
 Copy code
 mvn spring-boot:run
@@ -187,12 +187,9 @@ Default URL:
 arduino
 Copy code
 http://localhost:9090
-🧑‍💻 Author
+##🧑‍💻 Author
 Anas Ahmed
 Backend Developer | Java | Spring Boot | REST APIs
 
-📜 License
+##📜 License
 This project is part of an educational final year project and is free to use for learning purposes.
-
-yaml
-Copy code
