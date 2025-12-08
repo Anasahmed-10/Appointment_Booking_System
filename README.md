@@ -61,16 +61,13 @@ src/main/java/com/appointment/booking/
 │
 └── util/ # JWT utilities
 
-yaml
-Copy code
-
 ---
 
 ## 🔑 Authentication Endpoints
 
 ### **REGISTER USER**
 `POST /api/auth/register`
-```json
+json
 {
   "name": "John Doe",
   "email": "john@example.com",
@@ -80,13 +77,13 @@ Copy code
 
 ### **LOGIN**
 `POST /api/auth/login`
-```json
+json
 {
   "email": "john@example.com",
   "password": "password123"
 }
 `Response:`
-```json
+json
 {
   "id": 3,
   "name": "John Doe",
@@ -101,7 +98,7 @@ Authorization: Bearer <token>
 ### **👨‍⚕️ Provider Endpoints (ROLE = PROVIDER)**
 Create Provider Profile
 `POST /api/providers`
-```json
+json
 {
   "specialization": "Physiotherapy",
   "description": "Expert physiotherapist",
@@ -109,7 +106,7 @@ Create Provider Profile
 }
 ### **Create Service**
 `POST /provider/{providerId}/services`
-```json
+json
 {
   "name": "Massage Therapy",
   "description": "Deep tissue massage",
@@ -117,18 +114,19 @@ Create Provider Profile
 }
 ### **Create Schedule**
 `POST /provider/{providerId}/schedules`
-```json
+json
 {
   "dayOfWeek": "MONDAY",
   "startTime": "09:00",
   "endTime": "17:00"
 }
 
+---
 
 ## 📅 **Appointment Endpoints**
 Book an Appointment
 `POST /api/appointments`
-```json
+json
 {
   "userId": 1,
   "providerId": 2,
@@ -140,6 +138,8 @@ Book an Appointment
 Update Appointment Status
 `PUT /api/appointments/{id}/status?status=CONFIRMED`
 
+---
+
 ## **⚙️ Configuration**
 application.properties
 spring.datasource.url=jdbc:mysql://localhost:3306/appointments
@@ -147,7 +147,10 @@ spring.datasource.username=root
 spring.datasource.password=your-password
 
 jwt.secret=your32bytejwtsecretkeyhere
-##**🧪 Testing With Postman**
+
+---
+
+## **🧪 Testing With Postman**
 Register user (Provider)
 Login → Get JWT token
 Create provider profile (Auth required)
@@ -157,16 +160,22 @@ Customer logs in + books appointment
 Provider approves/cancels/updates appointment
 You may also create a structured Postman Collection for easier collaboration.
 
-##**🏁 Running the Project**
+---
+
+## **🏁 Running the Project**
 bash
 Copy code
 mvn spring-boot:run
 Default URL:
 http://localhost:9090
 
-##**🧑‍💻 Author**
+---
+
+## **🧑‍💻 Author**
 **Anas Ahmed**
 Backend Developer | Java | Spring Boot | REST APIs
+
+---
 
 ## **📜 License**
 This project is part of an educational final year project and is free to use for learning purposes.
