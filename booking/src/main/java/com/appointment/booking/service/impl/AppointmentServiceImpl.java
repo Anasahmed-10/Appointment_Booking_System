@@ -21,15 +21,15 @@ import java.util.stream.Collectors;
 public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
-    private final AppointmentRepository appointmentRepository;
+    private AppointmentRepository appointmentRepository;
     @Autowired
-    private final ProviderRepository providerRepository;
+    private ProviderRepository providerRepository;
     @Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    private final ServiceEntityRepository serviceRepository;
+    private ServiceEntityRepository serviceRepository;
     @Autowired
-    private final ScheduleRepository scheduleRepository;
+    private ScheduleRepository scheduleRepository;
 
     // -----------------------------------
     // CREATE Appointment

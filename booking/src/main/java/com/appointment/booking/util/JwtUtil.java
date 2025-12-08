@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -35,10 +37,11 @@ public class JwtUtil {
     public String generateToken(User user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtExpirationMs);
-
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().name()); 
         return Jwts.builder()
                 .subject(user.getEmail())
-                .claim("role", user.getRole().name())
+                .claims(claims)
                 .claim("userId", user.getId())
                 .issuedAt(now)
                 .expiration(expiry)
@@ -56,6 +59,11 @@ public class JwtUtil {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    public String getRoleFromToken(String token) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get("role", String.class);
     }
 
     // Extract username/email from token
@@ -76,6 +84,13 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
 

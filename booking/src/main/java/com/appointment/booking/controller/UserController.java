@@ -24,7 +24,7 @@ import static com.appointment.booking.model.User.*;
 @Validated
 public class UserController {
 
-    @Autowired
+   
     private final UserService userService;
 
     /**
@@ -57,9 +57,9 @@ public class UserController {
         User user = userService.findById(userDetails.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        UserResponse resp = new UserResponse(user.getId(), user.getName(), user.getEmail(),
-                user.getPhone(), user.getAddress(), user.getRole().name());
-
+        UserResponse resp = new UserResponse(user.getId(), user.getEmail(),
+                 user.getRole().name());
+//, user.getName(),  user.getPhone(), user.getAddress(),
         return ResponseEntity.ok(resp);
     }
     /**
@@ -71,8 +71,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return userService.findById(id)
-                .map(u -> ResponseEntity.ok(new UserResponse(u.getId(), u.getName(), u.getEmail(),
-                        u.getPhone(), u.getAddress(), u.getRole().name())))
+                .map(u -> ResponseEntity.ok(new UserResponse(u.getId(), u.getEmail(),
+                         u.getRole().name())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -84,8 +84,8 @@ public class UserController {
     @GetMapping("/by-email")
     public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email) {
         return userService.findByEmail(email)
-                .map(u -> ResponseEntity.ok(new UserResponse(u.getId(), u.getName(), u.getEmail(),
-                        u.getPhone(), u.getAddress(), u.getRole().name())))
+                .map(u -> ResponseEntity.ok(new UserResponse(u.getId(), u.getEmail(),
+                        u.getRole().name())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

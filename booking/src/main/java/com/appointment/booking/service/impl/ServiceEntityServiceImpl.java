@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 public class ServiceEntityServiceImpl implements ServiceEntityService {
 
     @Autowired
-    private final ServiceEntityRepository serviceEntityRepository;
-    @Autowired
+    private ServiceEntityRepository serviceEntityRepository;
+
     private final ProviderService providerService;
 
     @Override

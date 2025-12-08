@@ -15,8 +15,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private final UserRepository userRepository;
-    @Autowired
+    private UserRepository userRepository;
+    
     private final PasswordEncoder passwordEncoder;
 
     @Override

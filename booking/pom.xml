@@ -85,7 +85,13 @@
 			<version>0.12.3</version>
 			<scope>runtime</scope>
 		</dependency>
-	</dependencies>
+	
+   <dependency>
+     <groupId>mysql</groupId>
+     <artifactId>mysql-connector-java</artifactId>
+     <version>8.0.17</version>
+   </dependency>
+ </dependencies>
 
 	<build>
 		<plugins>

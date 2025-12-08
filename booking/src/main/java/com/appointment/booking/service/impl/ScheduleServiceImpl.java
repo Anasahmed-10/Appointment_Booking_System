@@ -10,6 +10,8 @@ import com.appointment.booking.controller.dto.ScheduleRequest;
 import com.appointment.booking.model.UserRole;
 import lombok.RequiredArgsConstructor;
 import com.appointment.booking.model.User;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +21,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
 
-    private final ScheduleRepository scheduleRepository;
-
-    private final ProviderRepository providerRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+    @Autowired
+    private ProviderRepository providerRepository;
 
     @Override
     public ScheduleResponse createSchedule(Long providerId, ScheduleRequest scheduleRequest, User currentUser) {

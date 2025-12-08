@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.appointment.booking.model.User;
+import com.appointment.booking.security.UserDetailsImpl;
 
 import java.util.List;
 
@@ -25,10 +26,12 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponse> createSchedule(
             @PathVariable Long providerId,
             @RequestBody ScheduleRequest scheduleRequest,
-            @AuthenticationPrincipal User currentUser
+            @AuthenticationPrincipal UserDetailsImpl currentUser
 
     ) {
-        ScheduleResponse createdSchedule = scheduleService.createSchedule(providerId, scheduleRequest, currentUser);
+        User user = currentUser.getUser();
+
+        ScheduleResponse createdSchedule = scheduleService.createSchedule(providerId, scheduleRequest, user);
         return ResponseEntity.ok(createdSchedule);
     }
 
@@ -56,10 +59,12 @@ public class ScheduleController {
             @PathVariable Long providerId,
             @PathVariable Long scheduleId,
             @RequestBody ScheduleRequest scheduleRequest,
-            @AuthenticationPrincipal User currentUser
+            @AuthenticationPrincipal UserDetailsImpl currentUser
 
     ) {
-        return ResponseEntity.ok(scheduleService.updateSchedule(providerId, scheduleId, scheduleRequest, currentUser));
+        User user = currentUser.getUser();
+
+        return ResponseEntity.ok(scheduleService.updateSchedule(providerId, scheduleId, scheduleRequest, user));
     }
 
     // Delete schedule
@@ -67,10 +72,12 @@ public class ScheduleController {
     public ResponseEntity<String> deleteSchedule(
             @PathVariable Long providerId,
             @PathVariable Long scheduleId,
-            @AuthenticationPrincipal User currentUser
+            @AuthenticationPrincipal UserDetailsImpl currentUser
 
     ) {
-        scheduleService.deleteSchedule(providerId, scheduleId, currentUser);
+        User user = currentUser.getUser();
+
+        scheduleService.deleteSchedule(providerId, scheduleId, user);
         return ResponseEntity.ok("Schedule deleted successfully.");
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppointmentController {
 
-    @Autowired
     private final AppointmentService appointmentService;
 
     // CREATE Appointment
@@ -49,7 +48,6 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentsByUser(userId, currentUser));
     }
 
-    // UPDATE status (CONFIRM / CANCEL / COMPLETE)
     @PutMapping("/{appointmentId}/status")
     public ResponseEntity<AppointmentResponse> updateStatus(
             @PathVariable Long appointmentId,
@@ -61,7 +59,6 @@ public class AppointmentController {
         );
     }
 
-    // DELETE an appointment
     @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> deleteAppointment(
         @PathVariable Long appointmentId,

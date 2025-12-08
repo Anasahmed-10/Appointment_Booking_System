@@ -19,8 +19,8 @@ import java.util.Optional;
 public class ProviderServiceImpl implements ProviderService {
 
     @Autowired
-    private final ProviderRepository providerRepository;
-    @Autowired
+    private ProviderRepository providerRepository;
+ 
     private final UserService userService;
 
     @Override

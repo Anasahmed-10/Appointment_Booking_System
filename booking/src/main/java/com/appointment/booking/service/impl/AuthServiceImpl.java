@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private final UserRepository userRepository;
-    @Autowired
+    private UserRepository userRepository;
+   
     private final PasswordEncoder passwordEncoder;
-    @Autowired
+  
     private final AuthenticationManager authenticationManager;
-    @Autowired
+  
     private final UserService userService;
 
     @Override

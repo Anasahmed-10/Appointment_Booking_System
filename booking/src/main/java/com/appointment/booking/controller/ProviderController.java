@@ -4,6 +4,7 @@ import com.appointment.booking.controller.dto.ProviderRequest;
 import com.appointment.booking.controller.dto.ProviderResponse;
 import com.appointment.booking.model.Provider;
 import com.appointment.booking.model.User;
+import com.appointment.booking.security.UserDetailsImpl;
 import com.appointment.booking.service.ProviderService;
 import com.appointment.booking.service.UserService;
 import lombok.*;
@@ -34,10 +35,12 @@ public class ProviderController {
     @PostMapping
     public ResponseEntity<ProviderResponse> createProvider(
             @Valid @RequestBody ProviderRequest req,
-            @AuthenticationPrincipal User currentUser) {
+            @AuthenticationPrincipal UserDetailsImpl currentUser) {
+        
+        User user = currentUser.getUser();
 
         Provider provider = Provider.builder()
-                .user(currentUser) // get from JWT token
+                .user(user) // get from JWT token
                 .specialization(req.getSpecialization())
                 .description(req.getDescription())
                 .contactInfo(req.getContactInfo())
@@ -74,9 +77,10 @@ public class ProviderController {
     public ResponseEntity<ProviderResponse> updateProvider(
             @PathVariable Long id,
             @Valid @RequestBody ProviderRequest req,
-            @AuthenticationPrincipal User currentUser) {
+            @AuthenticationPrincipal UserDetailsImpl currentUser) {
 
-            Provider updated = providerService.updateProvider(id, req, currentUser);
+            User user = currentUser.getUser();
+            Provider updated = providerService.updateProvider(id, req, user);
         return ResponseEntity.ok(ProviderResponse.fromEntity(updated));
     }
 
@@ -84,9 +88,13 @@ public class ProviderController {
    @DeleteMapping("/{id}")
    public ResponseEntity<Void> deleteProvider(
            @PathVariable Long id,
-           @AuthenticationPrincipal User currentUser) {
+           @AuthenticationPrincipal UserDetailsImpl currentUser) {
 
-       providerService.deleteProvider(id, currentUser);
+        
+    
+        User user = currentUser.getUser();
+        
+       providerService.deleteProvider(id, user);
        return ResponseEntity.noContent().build();
    }
 
