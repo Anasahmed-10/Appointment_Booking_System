@@ -77,19 +77,16 @@ Copy code
   "password": "password123",
   "role": "PROVIDER"
 }
-### **LOGIN**
-POST /api/auth/login
 
-json
-Copy code
+### **LOGIN**
+`POST /api/auth/login`
+```json
 {
   "email": "john@example.com",
   "password": "password123"
 }
-Response:
-
-json
-Copy code
+`Response:`
+```json
 {
   "id": 3,
   "name": "John Doe",
@@ -97,50 +94,41 @@ Copy code
   "role": "PROVIDER",
   "token": "your-jwt-token"
 }
-**GET CURRENT USER**
-GET /api/auth/me
+### **GET CURRENT USER**
+`GET /api/auth/me`
 Headers:
-
-makefile
-Copy code
 Authorization: Bearer <token>
-👨‍⚕️ Provider Endpoints (ROLE = PROVIDER)
+### **👨‍⚕️ Provider Endpoints (ROLE = PROVIDER)**
 Create Provider Profile
-POST /api/providers
-
-json
-Copy code
+`POST /api/providers`
+```json
 {
   "specialization": "Physiotherapy",
   "description": "Expert physiotherapist",
   "contactInfo": "doctor@example.com"
 }
-**Create Service**
-POST /provider/{providerId}/services
-
-json
-Copy code
+### **Create Service**
+`POST /provider/{providerId}/services`
+```json
 {
   "name": "Massage Therapy",
   "description": "Deep tissue massage",
   "price": 5000
 }
-**Create Schedule**
-POST /provider/{providerId}/schedules
-
-json
-Copy code
+### **Create Schedule**
+`POST /provider/{providerId}/schedules`
+```json
 {
   "dayOfWeek": "MONDAY",
   "startTime": "09:00",
   "endTime": "17:00"
 }
-##📅 **Appointment Endpoints**
-Book an Appointment
-POST /api/appointments
 
-json
-Copy code
+
+## 📅 **Appointment Endpoints**
+Book an Appointment
+`POST /api/appointments`
+```json
 {
   "userId": 1,
   "providerId": 2,
@@ -150,46 +138,35 @@ Copy code
   "status": "PENDING"
 }
 Update Appointment Status
-PUT /api/appointments/{id}/status?status=CONFIRMED
+`PUT /api/appointments/{id}/status?status=CONFIRMED`
 
-⚙️ Configuration
+## **⚙️ Configuration**
 application.properties
-ini
-Copy code
 spring.datasource.url=jdbc:mysql://localhost:3306/appointments
 spring.datasource.username=root
 spring.datasource.password=your-password
 
 jwt.secret=your32bytejwtsecretkeyhere
-🧪 Testing With Postman
+##**🧪 Testing With Postman**
 Register user (Provider)
-
 Login → Get JWT token
-
 Create provider profile (Auth required)
-
 Add services & schedules
-
 Register Customer
-
 Customer logs in + books appointment
-
 Provider approves/cancels/updates appointment
-
 You may also create a structured Postman Collection for easier collaboration.
 
-##🏁 Running the Project
+##**🏁 Running the Project**
 bash
 Copy code
 mvn spring-boot:run
 Default URL:
-
-arduino
-Copy code
 http://localhost:9090
-##🧑‍💻 Author
-Anas Ahmed
+
+##**🧑‍💻 Author**
+**Anas Ahmed**
 Backend Developer | Java | Spring Boot | REST APIs
 
-##📜 License
+## **📜 License**
 This project is part of an educational final year project and is free to use for learning purposes.
